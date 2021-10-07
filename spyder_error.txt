@@ -1,0 +1,24 @@
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/spyder/utils/introspection/manager.py", line 234, in show_object_info
+    info = self._get_code_info('info', position, auto=auto)
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/spyder/utils/introspection/manager.py", line 216, in _get_code_info
+    **kwargs)
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/spyder/utils/introspection/utils.py", line 75, in __init__
+    self._get_info()
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/spyder/utils/introspection/utils.py", line 87, in _get_info
+    lexer = find_lexer_for_filename(self.filename)
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/spyder/utils/introspection/utils.py", line 180, in find_lexer_for_filename
+    lexer = get_lexer_for_filename(filename)
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/pygments/lexers/__init__.py", line 207, in get_lexer_for_filename
+    res = find_lexer_class_for_filename(_fn, code)
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/pygments/lexers/__init__.py", line 172, in find_lexer_class_for_filename
+    for cls in find_plugin_lexers():
+  File "/home/deeplp/anaconda3/envs/py36/lib/python3.6/site-packages/pygments/plugin.py", line 54, in find_plugin_lexers
+    yield entrypoint.load()
+  File "/home/deeplp/.local/lib/python3.6/site-packages/pkg_resources/__init__.py", line 2460, in load
+    self.require(*args, **kwargs)
+  File "/home/deeplp/.local/lib/python3.6/site-packages/pkg_resources/__init__.py", line 2483, in require
+    items = working_set.resolve(reqs, env, installer, extras=self.extras)
+  File "/home/deeplp/.local/lib/python3.6/site-packages/pkg_resources/__init__.py", line 786, in resolve
+    raise DistributionNotFound(req, requirers)
+pkg_resources.DistributionNotFound: The 'parso<0.9.0,>=0.8.0' distribution was not found and is required by jedi
+
