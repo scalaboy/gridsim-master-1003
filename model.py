@@ -107,8 +107,8 @@ class Actor(nn.Module):
 		#action = action * self.action_lim
 		min_action, = map (torch.tensor, (min_action, ))
 		gap_action, = map (torch.tensor, (gap_action, ))
-		print('in model action_b shape is ',action_b.shape)
-		print('in model action_b is ',action_b,min_action,gap_action)
+		#print('in model action_b shape is ',action_b.shape)
+		#print('in model action_b is ',action_b,min_action,gap_action)
 		return min_action+action_b*gap_action     
 		if(action_b.size()[0] >1):       
 		  action=min_action+action_b[0:54]*gap_action

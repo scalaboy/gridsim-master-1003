@@ -44,7 +44,7 @@ class Trainer:
 		utils.hard_update(self.target_actor, self.actor)
 		utils.hard_update(self.target_critic, self.critic)
 
-	def get_exploitation_action(self, state_gen_v,min_a,gap_a,min_v,gap_v):
+	def get_exploitation_action(self, state_gen_v,min_a,gap_a):
 		"""
 		gets the action from target actor added with exploration noise
 		:param state: state (Numpy array)
@@ -54,9 +54,9 @@ class Trainer:
 		state_gen_v = torch.tensor(state_gen_v, dtype=torch.float32)   
 		min_a = torch.tensor(Variable(torch.from_numpy(min_a)), dtype=torch.float32)
 		gap_a = torch.tensor(Variable(torch.from_numpy(gap_a)), dtype=torch.float32)
-		min_v = torch.tensor(Variable(torch.from_numpy(min_v)), dtype=torch.float32)
-		gap_v = torch.tensor(Variable(torch.from_numpy(gap_v)), dtype=torch.float32)
-		action = self.target_actor.forward(state_gen_v,min_a,gap_a,min_v,gap_v).detach()
+		#min_v = torch.tensor(Variable(torch.from_numpy(min_v)), dtype=torch.float32)
+		#gap_v = torch.tensor(Variable(torch.from_numpy(gap_v)), dtype=torch.float32)
+		action = self.target_actor.forward(state_gen_v,min_a,gap_a).detach()
 		return action.data.numpy()
 
 	def get_exploration_action(self, state_gen_v,min_a,gap_a):
@@ -83,14 +83,15 @@ class Trainer:
 		Samples a random batch from replay memory and performs optimization
 		:return:
 		"""
-		s1,min_a,gap_a,min_v,gap_v, a1,r1,s2 = self.ram.sample(BATCH_SIZE)
+		#s1,min_a,gap_a,min_v,gap_v, a1,r1,s2 = self.ram.sample(BATCH_SIZE)
+		s1,min_a,gap_a, a1,r1,s2 = self.ram.sample(BATCH_SIZE)        
 		print('reward in train is ',r1)
 		#print('s1,min_a,gap_a,a1,r1,s2 ===',s1,min_a,gap_a,a1,r1,s2)
 		s1 = Variable(torch.from_numpy(s1))
 		min_a = Variable(torch.from_numpy(min_a))
 		gap_a = Variable(torch.from_numpy(gap_a))
-		min_v = Variable(torch.from_numpy(min_v))
-		gap_v = Variable(torch.from_numpy(gap_v))
+		#min_v = Variable(torch.from_numpy(min_v))
+		#gap_v = Variable(torch.from_numpy(gap_v))
 		a1 = Variable(torch.from_numpy(a1))
 		r1 = Variable(torch.from_numpy(r1))
 		s2 = Variable(torch.from_numpy(s2))
@@ -100,9 +101,9 @@ class Trainer:
 		if(s1.equal(s2)):
 		 y_expected=-999*r1
 		else:    
-        		a2 = self.target_actor.forward(s2,min_a,gap_a,min_v,gap_v).detach()
+        		a2 = self.target_actor.forward(s2,min_a,gap_a).detach()
                 #to do s2 get min_a2,gap_a2
-        		print('in train',a2 )
+        		#print('in train',a2 )
         		next_val = torch.squeeze(self.target_critic.forward(s2, a2).detach())
         		# y_exp = r + gamma*Q'( s2, pi'(s2))
         		y_expected = r1 + GAMMA*next_val
@@ -115,8 +116,8 @@ class Trainer:
 		self.critic_optimizer.step()
 
 		# ---------------------- optimize actor ----------------------
-		pred_a1 = self.actor.forward(s1,min_a,gap_a,min_v,gap_v)
-		print(pred_a1)
+		pred_a1 = self.actor.forward(s1,min_a,gap_a)
+		#print(pred_a1)
 		loss_actor = -1*torch.sum(self.critic.forward(s1, pred_a1))
 		self.actor_optimizer.zero_grad()
 		loss_actor.backward()

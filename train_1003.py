@@ -44,8 +44,8 @@ def main():
     len(state.curstep_renewable_gen_p_max) + len(state.nextstep_renewable_gen_p_max) +\
     len(settings.max_gen_p) + len(settings.min_gen_p) + len(settings.max_gen_v) + len(settings.min_gen_v)+\
     len(state.target_dispatch) + len(state.actual_dispatch)
-    action_dim = 2*settings.num_gen
-    #action_dim = settings.num_gen
+    #action_dim = 2*settings.num_gen
+    action_dim = settings.num_gen
     trainer = train.Trainer(state_dim, action_dim, max_a, ram)
     #trainer.load_models(2400)
     for _ep in range(MAX_EPISODES):
@@ -62,8 +62,8 @@ def main():
         		gap_v = (max_v - min_v)*0.98                
         		gap_a = np.array(list( map(inf_shot,gap_a))).astype('float32')
         		min_a = np.array(list( map(inf_shot,min_a))).astype('float32')
-        		gap_v = np.array(list( map(inf_shot,gap_v))).astype('float32')
-        		min_v = np.array(list( map(inf_shot,min_v))).astype('float32')
+        		#gap_v = np.array(list( map(inf_shot,gap_v))).astype('float32')
+        		#min_v = np.array(list( map(inf_shot,min_v))).astype('float32')
         		state_gen_v = np.array(state.gen_v).astype('double')
         		load_p = np.array(state.load_p).astype('double')
         		nextstep_load_p =  np.array(state.nextstep_load_p).astype('double')
@@ -94,7 +94,7 @@ def main():
         		random1 = random.randint(0,10)
         		if(random1 >-18):
         		# 	# validate every 5th episode
-        		 	action = trainer.get_exploitation_action(input_tensor9,min_a,gap_a,min_v,gap_v)
+        		 	action = trainer.get_exploitation_action(input_tensor9,min_a,gap_a)
         		else:
         		# 	# get action based on observation, use exploration policy here
         		 	print('in get_exploration_action=============')
@@ -102,7 +102,9 @@ def main():
         		 	action = adjust_gen_p
         		#@if(random.randint(0,10) >4):
         		 #   action = adjust_gen_p
-        		action_step = {'adjust_gen_p': action[0:settings.num_gen], 'adjust_gen_v': action[settings.num_gen:2*settings.num_gen]}   
+        		#action_step = {'adjust_gen_p': action[0:settings.num_gen], 'adjust_gen_v': action[settings.num_gen:2*settings.num_gen]}   
+        		action_step = {'adjust_gen_p': action, 'adjust_gen_v':adjust_gen_v}   
+
         		if(not adjust_gen_p_action_space.contains(action_step['adjust_gen_p'])):
         		     print('errororrrrrrrrrrrrrrrrrrrrrrrrrrrrr \n',random1,action)
                      
@@ -120,7 +122,7 @@ def main():
         			new_state_gen_v = None
         			print('in train_main r count is ',r,reward, done, info)
         			reward = -999   
-        			ram.add(input_tensor9,min_a,gap_a,min_v,gap_v, action, reward, input_tensor9)
+        			ram.add(input_tensor9,min_a,gap_a, action, reward, input_tensor9)
         			trainer.optimize()                    
         			break
         		else:
@@ -145,7 +147,7 @@ def main():
                      new_curstep_renewable_gen_p_max,new_nextstep_renewable_gen_p_max,\
                     new_max_gen_p,new_min_gen_p, new_max_gen_v,new_min_gen_v,new_target_dispatch,new_actual_dispatch),axis=0)                
         			# push this exp in ram
-        			ram.add(input_tensor9,min_a,gap_a,min_v,gap_v, action, reward, new_input_tensor9)
+        			ram.add(input_tensor9,min_a,gap_a, action, reward, new_input_tensor9)
         			trainer.optimize()
         		state = new_observation
         
