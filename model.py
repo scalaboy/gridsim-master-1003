@@ -85,7 +85,8 @@ class Actor(nn.Module):
 		self.fc4 = nn.Linear(256,action_dim)
 		self.fc4.weight.data.uniform_(-EPS,EPS)
 
-	def forward(self, state,min_action,gap_action,min_v,gap_v):
+	#def forward(self, state,min_action,gap_action,min_v,gap_v):
+	def forward(self, state,min_action,gap_action):
 		"""
 		returns policy function Pi(s) obtained from actor network
 		this function is a gaussian prob distribution for all actions
@@ -108,11 +109,13 @@ class Actor(nn.Module):
 		gap_action, = map (torch.tensor, (gap_action, ))
 		print('in model action_b shape is ',action_b.shape)
 		print('in model action_b is ',action_b,min_action,gap_action)
+		return min_action+action_b*gap_action     
 		if(action_b.size()[0] >1):       
 		  action=min_action+action_b[0:54]*gap_action
 		else:       
 		  action=min_action+action_b[0][0:54]*gap_action
 		#a_v = F.sigmoid(self.fc4(x))
+		'''
 		min_v, = map (torch.tensor, (min_v, ))
 		gap_v, = map (torch.tensor, (gap_v, ))
 		#print('in model action is ',action)
@@ -123,6 +126,6 @@ class Actor(nn.Module):
 		#action_v=min_v+action_b[54:108]*min_v
 		print('action in model is ',torch.cat((action,action_v), 0))
 		return torch.cat((action,action_v), 0)#.cpu().detach().numpy()
-
+		'''
 
 
